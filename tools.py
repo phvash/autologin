@@ -56,21 +56,6 @@ class Connections:
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36\
              (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36"
 
-
-#              Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-# Accept-Encoding:gzip, deflate, br
-# Accept-Language:en-US,en;q=0.8
-# Cache-Control:max-age=0
-# Connection:keep-alive
-# Content-Length:88
-# Content-Type:application/x-www-form-urlencoded
-# Cookie:__utma=135605487.788700159.1481619800.1483540398.1483825883.5; __utmz=135605487.1481619800.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
-# Host:gateway.oauife.edu.ng
-# Origin:https://gateway.oauife.edu.ng
-# Referer:https://gateway.oauife.edu.ng/start.html
-# Upgrade-Insecure-Requests:1
-# User-Agent:Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Mobile Safari/537.36
-
         }
 
         return {"payload": payload, "headers": headers}
@@ -92,7 +77,8 @@ class Connections:
             session = requests.Session()
             response = session.post('http://gateway.oauife.edu.ng/login',
                             data=formatted_post.get('data'),
-                            headers=formatted_post.get('headers')
+                            headers=formatted_post.get('headers'),
+                            verify=False
                             )
             # response = session.get('http://canvas.oauife.edu.ng/advert')
             print response.text

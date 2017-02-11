@@ -18,9 +18,12 @@ class App:
         self.user_details = DatabaseHelper.load_data()
 
     def login(self):
-        details = self.user_details[0]
-        server_reply = self.conn.post(details)
-        self.parse_response(server_reply, details)
+        if self.conn.is_active:
+            self.monitor_connection()
+        else:
+            details = self.user_details[0]
+            server_reply = self.conn.post(details)
+            self.parse_response(server_reply, details)
 
     def parse_response(self, server_reply, details):
         username = details.keys()[0]
@@ -75,6 +78,7 @@ class App:
 
     def monitor_connection(self):
         while self.conn.is_active():
+            print "connected: internet access..."
             sleep(120)
             continue
         self.login()
