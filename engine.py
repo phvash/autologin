@@ -16,14 +16,12 @@ class App:
     def __init__(self):
         self.conn = Connections()
         self.user_details = DatabaseHelper.load_data()
+        self.user_details_bak = self.user_details.copy()
+        self.sep = '=='*20
 
     def login(self):
-        if self.conn.is_active:
-            self.monitor_connection()
-        else:
-            details = self.user_details[0]
-            server_reply = self.conn.post(details)
-            self.parse_response(server_reply, details)
+        server_reply = self.conn.post(self.user_details)
+        self.parse_response(server_reply, self.user_details)
 
     def parse_response(self, server_reply, details):
         username = details.keys()[0]
@@ -45,26 +43,31 @@ class App:
         # case 3
         if 'invalid' in server_reply:
             print "%s is invalid! " % username
-            if self.remove(details):
+            if self.remove(username):
                 self.login()
 
         # case 4
         elif 'confirm' or 'maximum' in server_reply:
-            print "%s time usage exceeded " % username
-            print "Switching to a different account... "
-            self.remove(details)
+            print self.sep
+            print "%s time usage exceeded \n " % username
+            print self.sep
+            print "Switching to a different account... \n\n"
+            self.remove(username)
+            print self.sep
+            print "sleeping for 30 secs"
+            sleep(30)
             self.login()
 
         # case 5
         elif 'logged in' in server_reply:
             print "%s is already logged in, switching account..."
-            self.remove(details)
+            self.remove(username)
             self.login()
 
         # case 6
         elif 'success' in server_reply:
             print 'Sucessfully logged in as %s' % username
-            self.remove(details)
+            self.remove(username)
             self.monitor_connection()
 
         else:
@@ -72,13 +75,17 @@ class App:
 
     def remove(self, user_detail):
         try:
-            self.user_details.remove(user_detail)
+            self.user_details.pop(user_detail)
+            print self.sep
+            print 'i removed {}'.format(user_detail)
+            print self.sep
         except IndexError:
             raise IndexError("You ran out of accounts! ")
+        if self.user_details == {}:
+            self.user_details = self.user_details_bak.copy()
 
     def monitor_connection(self):
         while self.conn.is_active():
-            print "connected: internet access..."
             sleep(120)
             continue
         self.login()
